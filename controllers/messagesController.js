@@ -1,5 +1,9 @@
+const path = require('path');
 const messageModel = require("../model/messageModel");
 const request = require("request-promise");
+require('dotenv').config({path: path.resolve(__dirname,'../.env')})
+
+
 module.exports.addMessage = async (req, res, next) => {
     try {
         const {from, to, message} = req.body;
@@ -15,16 +19,16 @@ module.exports.addMessage = async (req, res, next) => {
     }
 };
 function options (jsonBody, uri) {
+    const staticBotURL= process.env.BOT_SITE 
     return ({
         method: 'POST',
-        uri: `http://5baf-180-243-12-177.ngrok.io/${uri}`, // Change this to the tunnel
+        uri: `${staticBotURL}/${uri}`, // Change this to the tunnel
         body: jsonBody,
         json: true,
     })
 }
 
 function formatBotMessage (jsonMsg) {
-    console.log(jsonMsg)
     const trackKeys = Object.keys(jsonMsg['track_id'])
     const arrayLen = trackKeys.length
     var messageReturn = "Did you search for these songs?\n"
