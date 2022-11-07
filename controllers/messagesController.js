@@ -19,7 +19,7 @@ module.exports.addMessage = async (req, res, next) => {
     }
 };
 function options (jsonBody, uri) {
-    const staticBotURL= process.env.BOT_SITE 
+    const staticBotURL= process.env.BOT_SITE
     return ({
         method: 'POST',
         uri: `${staticBotURL}/${uri}`, // Change this to the tunnel
@@ -33,7 +33,6 @@ function formatBotMessage (jsonMsg) {
     const arrayLen = trackKeys.length
     var messageReturn = "Did you search for these songs?\n"
     for (let i = 0; i < arrayLen; i++) {
-        if (i === 4) break;
         var trackId = trackKeys[i]
         const songName = jsonMsg['track_name'][trackId]
         const songArtist = jsonMsg['track_artist'][trackId]
@@ -41,15 +40,20 @@ function formatBotMessage (jsonMsg) {
         const lyrics = jsonMsg['lyrics'][trackId]
         let lyricSample = ""
         var arrLyrics = lyrics.split(" ")
-        for (let j = 0; j <= 9; j++) {
-            if (j != 9) {
+        for (let j = 0; j <= 12; j++) {
+            if (j != 12) {
                 lyricSample = lyricSample.concat(`${arrLyrics[j]} `)
             } else {
                 lyricSample = lyricSample.concat(`${arrLyrics[j]}...`)
             }
         }
-        const songEntry = `${i+1}. title: ${songName}, artist: ${songArtist}, genre: ${genre}\nsample lyrics: \"${lyricSample}\"\n`
+        const songEntry = `${i+1}. Title: ${songName}, Artist: ${songArtist}, Genre: ${genre}\nSample Lyrics: \"${lyricSample}\"\n\n`
+        if (i > 0 && songName === jsonMsg['track_name'][trackKeys[i-1]] && songArtist === jsonMsg['track_artist'][trackKeys[i-1]]) {
+            console.log(i)
+            continue
+        }
         messageReturn = messageReturn.concat(songEntry)
+        
     }
     return messageReturn
 }
@@ -83,7 +87,7 @@ async function getBotAnswer(message) {
         var returnMsg = formatBotMessage(response)
         return returnMsg
     } catch (e) {
-        console.log(e)
+        console.log(e.status)
         return "Something went wrong please try again!"
     }
 }
