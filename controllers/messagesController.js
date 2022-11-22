@@ -95,7 +95,7 @@ async function getBotAnswer(message) {
 module.exports.autoReplyMessage = async (req, res, next) => {
     try {
         const {from, to, message} = req.body;
-        
+        console.log(process.env.BOT_SITE)
         const data = await messageModel.create({
             message: {text: message},
             users: [from, to],
